@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+
+  <title>Submit JSON Data</title>
+   <style>
+    /* Define your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      height: 400px;
+      width: 400px;
+      margin-left: 500px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .form-container {
+      margin-bottom: 20px;
+    }
+
+    .form-field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    textarea,
+    input[type="text"] {
+      width: 100%;
+      padding: 5px;
+    }
+
+    button {
+      padding: 5px 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .json-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Submit JSON Data</h1>
+
+  <% if (typeof error !== 'undefined') { %>
+    <p>Error: <%= error %></p>
+  <% } %>
+
+  <div class="form-container">
+    <div class="form-field">
+      <label for="jsonData">Enter JSON data:</label>
+      <textarea id="jsonData" name="jsonData" rows="10" cols="50" placeholder="Enter JSON data"></textarea>
+    </div>
+    <div class="form-field">
+      <button id="submitBtn" type="button">Submit</button>
+      <button id="resetBtn" type="button">Reset</button>
+    </div>
+  </div>
+
+  <% if (jsonData) { %>
+    <div class="json-container">
+      <h2>Submitted JSON Data:</h2>
+      <% Object.entries(jsonData).forEach(([key, value]) => { %>
+        <div class="form-field">
+          <label for="<%= key %>"><%= key %>:</label>
+          <input id="<%= key %>" type="text" name="<%= key %>" value="<%= value %>" readonly>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <% if (storedData) { %>
+    <div class="json-container">
+      <h2>Stored JSON Data:</h2>
+      <% Object.entries(storedData).forEach(([key, value]) => { %>
+        <div class="form-field">
+          <label for="<%= key %>"><%= key %>:</label>
+          <input id="<%= key %>" type="text" name="<%= key %>" value="<%= value %>" readonly>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p>No data stored yet.</p>
+  <% } %>
+
+  <script>
+    // Reset the form fields
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      document.getElementById('jsonData').value = '';
+    });
+
+    // Submit the form data
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      const jsonData = document.getElementById('jsonData').value;
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/submit');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          window.location.reload();
+        } else {
+          console.error(xhr.responseText);
+        }
+      };
+      xhr.send(JSON.stringify({ jsonData }));
+    });
+  </script>
+</body>
+</html>
